@@ -10,6 +10,13 @@ class AddProductScreen extends StatefulWidget {
 class _AddProductScreenState extends State<AddProductScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+        appBar: AppBar(
+      title: Text("Add Product"),
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
+      automaticallyImplyLeading: false,
+      elevation: 0,
+    ));
   }
 }
