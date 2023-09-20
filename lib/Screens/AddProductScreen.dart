@@ -95,11 +95,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     DropdownMenuItem(child: Text("Fashion"), value: "Fashion"),
                     DropdownMenuItem(
                         child: Text("Electronics"), value: "Electronics"),
-                    DropdownMenuItem(child: Text("sports"), value: "Sports"),
+                    DropdownMenuItem(child: Text("Sports"), value: "Sports"),
                     DropdownMenuItem(
-                        child: Text("property"), value: "Proeprty"),
-                    DropdownMenuItem(child: Text("jobs"), value: "Joba"),
-                    DropdownMenuItem(child: Text("other"), value: "Other"),
+                        child: Text("Property"), value: "Proeprty"),
+                    DropdownMenuItem(child: Text("Jobs"), value: "Jobs"),
+                    DropdownMenuItem(child: Text("Other"), value: "Other"),
                   ],
                   onChanged: (value) {
                     setState(() {
