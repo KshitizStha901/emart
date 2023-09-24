@@ -1,9 +1,13 @@
 import 'dart:io';
 
 import 'package:emart/Services/ProductServices.dart';
+import 'package:emart/Widgets/Esnackbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../Model/Products.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -49,7 +53,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
         uploadedUrls.add(url);
       }
     }
-    print(uploadedUrls);
+    final product = Products(
+      name: _nameController.text,
+      description: _descriptionController.text,
+      category: category,
+      price: _priceController.text,
+      images: uploadedUrls,
+      userId: FirebaseAuth.instance.currentUser!.uid,
+    );
+    await ProductServices()
+        .createProduct(product)
+        .then(
+            (value) => {Esnackbar.show(context, "Product added successfullu")})
+        .catchError((error) {
+      Esnackbar.show(context, "Failed to add product");
+    });
   }
 
   @override

@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
+import '../Model/Products.dart';
 
 class ProductServices {
   // upload each images to firebase storage
@@ -21,7 +24,17 @@ class ProductServices {
       return url;
     } catch (e) {
       print(e);
-      return null;  
+      return null;
+    }
+  }
+
+  Future<void> createProduct(Products product) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .add(product.toJson());
+    } catch (e) {
+      print(e);
     }
   }
 }
