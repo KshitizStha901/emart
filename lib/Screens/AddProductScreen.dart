@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:emart/Services/ProductServices.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,7 +38,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
   //form key
   final _formKey = GlobalKey<FormState>();
 
-  void _addProduct() {}
+  void _addProduct() async {
+    List<String?> uploadedUrls = [];
+
+    // forloop for uploading each images in array
+
+    for (final eachImage in _selectedImages) {
+      final url = await ProductServices().uploadImage(File(eachImage));
+      if (url != null) {
+        uploadedUrls.add(url);
+      }
+    }
+    print(uploadedUrls);
+  }
 
   @override
   Widget build(BuildContext context) {
