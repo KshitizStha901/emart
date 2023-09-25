@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../Local_Storage/SharedPref.dart';
 import '../Model/Users.dart';
 
 class Auth {
@@ -16,6 +17,7 @@ class Auth {
           .doc(userId)
           .get();
       var decodeJson = Users().fromJson(result.data()!);
+      await SharedPref().setUserData(userId, decodeJson);
       isLogin = true;
     }).catchError((error) => {isLogin = false});
     return isLogin;
