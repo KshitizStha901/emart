@@ -1,4 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emart/Model/Products.dart';
 import 'package:flutter/material.dart';
 
 import '../Widgets/ProductCard.dart';
@@ -12,12 +14,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 //List of Images
-  final List<String> imgList = [
-    'https://imgeng.jagran.com/images/2023/may/Best%20Adidas%20Original%20Shoes%20For%20Men1682951431717.jpg',
-    'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80&#39;',
-    'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80&#39;',
-    'https://images.unsplash.com/photo-1593305841991-05c297ba4575?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1957&q=80&#39;',
-  ];
+
+  List<String> get imgList => [
+        'https://i.pinimg.com/564x/cf/9f/5e/cf9f5e2130513e2fb550cf36ea3c1d6e.jpg',
+        'https://i.pinimg.com/564x/90/fb/f6/90fbf6181ed4594ac92e634366b3b25d.jpg',
+        'https://i.pinimg.com/564x/95/ed/1a/95ed1a72ce4860097682be696e172144.jpg',
+        'https://i.pinimg.com/564x/65/9c/2f/659c2ff15fe7c2402bdda57dc42d53cf.jpg',
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -34,33 +37,53 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {},
             ),
           ]),
-      body: Column(
-        children: [
-          CarouselSlider(
-              options: CarouselOptions(),
-              items: imgList
-                  .map((item) => Container(
-                        child: Image.network(item),
-                      ))
-                  .toList()),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            "Showing Popular Products",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                ProductCard(),
-                ProductCard(),
-                ProductCard(),
-                ProductCard()
-              ])
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CarouselSlider(
+                options: CarouselOptions(),
+                items: imgList
+                    .map((item) => Container(
+                          child: Image.network(item),
+                        ))
+                    .toList()),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              "Showing Popular Products",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+
+            // /FutureBuilder for getting Products
+            FutureBuilder<QuerySnapshot?>(
+                future: FirebaseFirestore.instance.collection('products').get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: LinearProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text('Failed to load Data'));
+                  } else if (!snapshot.hasData) {
+                    return const Center(child: Text('No data available'));
+                  } else {
+                    final data = snapshot.data!.docs;
+                    return GridView.count(
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: List.generate(data.length, (index) {
+                          return ProductCard(
+                            name: data[index]['name'],
+                            price: data[index]['price'],
+                            description: data[index]['description'],
+                            category: data[index]['category'],
+                            image: data[index]['images'][0],
+                          );
+                        }));
+                  }
+                })
+          ],
+        ),
       ),
     );
   }

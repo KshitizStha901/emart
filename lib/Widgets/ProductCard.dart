@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatefulWidget {
-  const ProductCard({super.key});
+  final String name;
+  final String description;
+  final String category;
+  final String price;
+  final String image;
+
+  const ProductCard(
+      {required this.name,
+      required this.description,
+      required this.category,
+      required this.price,
+      required this.image,
+      super.key});
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -17,22 +29,19 @@ class _ProductCardState extends State<ProductCard> {
         child: Column(
           children: [
             ClipRect(
-              child: Image.network(
-                  'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8fDA%3D&w=1000&q=80&#39;',
-                  fit: BoxFit.cover,
-                  width: 1000,
-                  height: 120),
+              child: Image.network(widget.image,
+                  fit: BoxFit.cover, width: 1000, height: 120),
             ),
             Text(
-              "RedShoes",
+              widget.name,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             Text(
-              "Fashion",
+              widget.category,
               style: TextStyle(fontSize: 13),
             ),
             Text(
-              "NPR.4500",
+              "NPR.${widget.price}",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 17,

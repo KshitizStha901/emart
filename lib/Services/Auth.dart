@@ -1,14 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../Model/Users.dart';
+
 class Auth {
   final _auth = FirebaseAuth.instance;
   Future<bool> login(String email, String password) async {
     bool isLogin = false;
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password)
-        .then((value) => {isLogin = true})
-        .catchError((error) => {isLogin = false});
+        .then((value) async {
+      String userId = value.user!.uid;
+      var result = await FirebaseFirestore.instance
+          .collection('UserDetails')
+          .doc(userId)
+          .get();
+      var decodeJson = Users().fromJson(result.data()!);
+      isLogin = true;
+    }).catchError((error) => {isLogin = false});
     return isLogin;
   }
 
