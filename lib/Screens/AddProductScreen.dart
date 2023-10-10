@@ -62,7 +62,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       userId: FirebaseAuth.instance.currentUser!.uid,
     );
     await ProductServices()
-        .createProduct(product)
+        .createProduct(products)
         .then(
             (value) => {Esnackbar.show(context, "Product added successfullu")})
         .catchError((error) {

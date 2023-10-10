@@ -1,11 +1,13 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emart/local_storage/SharedPref.dart';
+import 'package:emart/model/Users.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../Local_Storage/SharedPref.dart';
-import '../Model/Users.dart';
 
 class Auth {
   final _auth = FirebaseAuth.instance;
+
   Future<bool> login(String email, String password) async {
     bool isLogin = false;
     await FirebaseAuth.instance
@@ -13,13 +15,17 @@ class Auth {
         .then((value) async {
       String userId = value.user!.uid;
       var result = await FirebaseFirestore.instance
-          .collection('UserDetails')
+          .collection('users')
           .doc(userId)
           .get();
+
       var decodeJson = Users().fromJson(result.data()!);
       await SharedPref().setUserData(userId, decodeJson);
+
       isLogin = true;
-    }).catchError((error) => {isLogin = false});
+    }).catchError((error) {
+      isLogin = false;
+    });
     return isLogin;
   }
 
@@ -27,34 +33,71 @@ class Auth {
       String email, String password) async {
     bool isRegister = false;
 
-    //register to authenication step1
+    // register to authentication step1
     UserCredential register = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
 
-    //step2 | get user id
+    // step 2 | get user id
     String userId = register.user!.uid;
 
-    //step3  | create user profile in firebase database
-
+    // step 3 | create user profile in firestore database
     await FirebaseFirestore.instance
-        .collection('UserDetails')
+        .collection('users')
         .doc(userId)
         .set({
-          'firstname': firstname,
+          'firsname': firstname,
           'lastname': lastname,
           'username': username,
           'email': email,
         })
         .then((value) => {isRegister = true})
-        .catchError((error) => {isRegister = false});
+        .catchError((error) {
+          isRegister = false;
+        });
 
     return isRegister;
   }
 
-  //auto login
-  // '?' for user present or not
+  // auto login
   Future<User?> autoLogin() async {
     User? user = _auth.currentUser;
     return user;
+  }
+
+  //logout
+  Future<void> signOut() async {
+    await _auth.signOut();
+    await SharedPref().removeUserData();
+  }
+
+  updateUser(String userID, Users updatedUserData) {}
+
+  uploadProfile(File file) {}
+}
+
+//upload profile
+Future<String?> uploadprofile(File imageFile) async {
+  try {
+    // path to storage
+    final path = 'profile/${DateTime.now()}.png';
+    final file = File(imageFile.path);
+    final ref = firebase_storage.FirebaseStorage.instance.ref().child(path);
+    await ref.putFile(file);
+    final url = await ref.getDownloadURL();
+    return url;
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+Future<void> updateUser(userId, Users user) async {
+  try {
+    await FirebaseFirestore.instance
+        .collection('products')
+        .doc(userId)
+        .update(user.toJson());
+  } catch (e) {
+    print(e);
   }
 }

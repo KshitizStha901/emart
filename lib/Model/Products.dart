@@ -15,14 +15,14 @@ class Products {
     this.userId,
   });
   //Map to json
-  Map<String,dynamic> toJson(){
-    return{
-      'name':name,
-      'description':description,
-      'category':category,
-      'price':price,
-      'images':images,
-      'userID':userId,
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'category': category,
+      'price': price,
+      'images': images,
+      'userId': userId,
     };
   }
 }

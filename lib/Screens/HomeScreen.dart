@@ -1,83 +1,167 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:emart/Model/Products.dart';
+import 'package:emart/global_variables.dart';
+import 'package:emart/widgets/ProductCard.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import '../Widgets/ProductCard.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-//List of Images
+  // list of images
+  final List<String> imgList = [
+    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8fDA%3D&w=1000&q=80',
+    'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+    'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
+    'https://images.unsplash.com/photo-1593305841991-05c297ba4575?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1957&q=80',
+  ];
 
-  List<String> get imgList => [
-        'https://i.pinimg.com/564x/cf/9f/5e/cf9f5e2130513e2fb550cf36ea3c1d6e.jpg',
-        'https://i.pinimg.com/564x/90/fb/f6/90fbf6181ed4594ac92e634366b3b25d.jpg',
-        'https://i.pinimg.com/564x/95/ed/1a/95ed1a72ce4860097682be696e172144.jpg',
-        'https://i.pinimg.com/564x/65/9c/2f/659c2ff15fe7c2402bdda57dc42d53cf.jpg',
-      ];
+  String filterCategory = 'all';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text("Welcome, Kshitiz!"),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {},
-            ),
-          ]),
+        title: Text('Welcome, $firstname'),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.menu),
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             CarouselSlider(
-                options: CarouselOptions(),
+                options: CarouselOptions(autoPlay: true),
                 items: imgList
                     .map((item) => Container(
-                          child: Image.network(item),
+                          child: Image.network(
+                            item,
+                            fit: BoxFit.cover,
+                            width: 1000,
+                          ),
                         ))
                     .toList()),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             const Text(
-              "Showing Popular Products",
+              'Showing popular products',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
-            // /FutureBuilder for getting Products
+            // list of products category
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 40,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: filterCategory == 'all'
+                            ? Colors.blue
+                            : Colors.white,
+                        foregroundColor: filterCategory == 'all'
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          filterCategory = 'all';
+                        });
+                      },
+                      child: const Text('All'),
+                    ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: filterCategory == 'furniture'
+                            ? Colors.blue
+                            : Colors.white,
+                        foregroundColor: filterCategory == 'furniture'
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          filterCategory = 'furniture';
+                        });
+                      },
+                      child: const Text('Furniture'),
+                    ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: filterCategory == 'clothes'
+                            ? Colors.blue
+                            : Colors.white,
+                        foregroundColor: filterCategory == 'clothes'
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          filterCategory = 'clothes';
+                        });
+                      },
+                      child: const Text('Clothes'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // future builder for getting data from firebase
             FutureBuilder<QuerySnapshot?>(
-                future: FirebaseFirestore.instance.collection('products').get(),
+                future: filterCategory == "all"
+                    ? FirebaseFirestore.instance.collection('products').get()
+                    : FirebaseFirestore.instance
+                        .collection('products')
+                        .where("category", isEqualTo: filterCategory)
+                        .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: LinearProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return const Center(child: Text('Failed to load Data'));
+                    return const Center(child: Text('Failed to load data'));
                   } else if (!snapshot.hasData) {
-                    return const Center(child: Text('No data available'));
+                    return const Center(child: Text('No data found'));
                   } else {
                     final data = snapshot.data!.docs;
+
                     return GridView.count(
                         crossAxisCount: 2,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         children: List.generate(data.length, (index) {
-                          return ProductCard(
-                            name: data[index]['name'],
-                            price: data[index]['price'],
-                            description: data[index]['description'],
-                            category: data[index]['category'],
-                            image: data[index]['images'][0],
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "/details",
+                                  arguments: {
+                                    "id": data[index].id,
+                                    "name": data[index]['name'],
+                                    "price": data[index]['price'],
+                                    "description": data[index]['description'],
+                                    "category": data[index]['category'],
+                                    "images": data[index]['images'],
+                                    "userId": data[index]['userId'],
+                                  });
+                            },
+                            child: ProductCard(
+                              name: data[index]['name'],
+                              price: data[index]['price'],
+                              description: data[index]['description'],
+                              category: data[index]['category'],
+                              image: data[index]['images'][0],
+                            ),
                           );
                         }));
                   }

@@ -1,4 +1,7 @@
+import 'package:emart/global_variables.dart';
 import 'package:flutter/material.dart';
+
+import '../Services/Auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -8,6 +11,33 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  void _signout() async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Sign Out'),
+            content: Text("Are you sure want to Logout?"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.red),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    Auth().signOut();
+                    Navigator.pushNamed(context, '/login');
+                  },
+                  child: Text("Confirm"))
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 20,
           ),
           Text(
-            "Kshitiz Shrestha",
+            "$firstname $lastname ",
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -38,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 05,
           ),
           Text(
-            "Kshitizstha@gmail.com",
+            "$email",
             style: TextStyle(
               fontSize: 12,
             ),
@@ -47,29 +77,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 40,
           ),
           Expanded(
-              child: ListView(children: const [
+              child: ListView(children: [
             ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, '/editprofile');
+              },
               leading: Icon(Icons.person),
               title: Text("Edit Profile"),
               subtitle: Text("Change your profile details"),
               trailing: Icon(Icons.arrow_forward),
             ),
             ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, '/myproduct');
+              },
               leading: Icon(Icons.production_quantity_limits),
               title: Text("My Products"),
               subtitle: Text("View your products"),
               trailing: Icon(Icons.arrow_forward),
             ),
             ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, '/changepass');
+              },
               leading: Icon(Icons.password),
               title: Text("Change Password"),
               subtitle: Text("Change your password"),
               trailing: Icon(Icons.arrow_forward),
-            )
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, '/favourite');
+              },
+              leading: Icon(Icons.favorite),
+              title: Text("Favourite Product"),
+              subtitle: Text("View your products"),
+              trailing: Icon(Icons.arrow_forward),
+            ),
           ])),
           ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              onPressed: () {},
+              onPressed: () {
+                _signout();
+              },
               child: Text('Logout'))
         ],
       )),
