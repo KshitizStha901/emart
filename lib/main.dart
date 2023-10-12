@@ -40,10 +40,10 @@ Future<void> main() async {
       '/details': (context) => ProductDetails(),
       '/search': (context) => SearchScreen(),
       '/myproduct': (context) => MyProductsScreen(),
-      '/favourite': (context) => FavouriteScreen(),
       '/editprofile': (context) => EditProfileScreen(),
       '/changepass': (context) => ChangePasswordScreen(),
-      '/editproduct': (context) => EditProfileScreen()
+      '/editproduct': (context) => EditProfileScreen(),
+      '/favourite': (context) => FavouriteScreen()
     },
   ));
 }

@@ -5,6 +5,7 @@ class Products {
   String? price;
   List<String?>? images;
   String? userId;
+  List<String?>? favouritedBy;
 
   Products({
     this.name,
@@ -13,6 +14,7 @@ class Products {
     this.price,
     this.images,
     this.userId,
+    this.favouritedBy,
   });
   //Map to json
   Map<String, dynamic> toJson() {
@@ -23,6 +25,7 @@ class Products {
       'price': price,
       'images': images,
       'userId': userId,
+      'favouritedBy': favouritedBy,
     };
   }
 }
