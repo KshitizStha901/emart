@@ -104,6 +104,14 @@ class _ProductDetailsState extends State<ProductDetails> {
 
     imgList = data['images'];
     getUserData();
+
+    //check current user is in favouriteBy array[]
+    if (data['favouritedBy'].contains(FirebaseAuth.instance.currentUser!.uid)) {
+      setState(() {
+        isFavourite = true;
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Product Details'),
