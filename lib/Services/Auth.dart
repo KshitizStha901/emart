@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'package:emart/Model/Users.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart/local_storage/SharedPref.dart';
-import 'package:emart/model/Users.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Auth {
@@ -70,34 +70,29 @@ class Auth {
     await SharedPref().removeUserData();
   }
 
-  updateUser(String userID, Users updatedUserData) {}
-
-  uploadProfile(File file) {}
-}
-
-//upload profile
-Future<String?> uploadprofile(File imageFile) async {
-  try {
-    // path to storage
-    final path = 'profile/${DateTime.now()}.png';
-    final file = File(imageFile.path);
-    final ref = firebase_storage.FirebaseStorage.instance.ref().child(path);
-    await ref.putFile(file);
-    final url = await ref.getDownloadURL();
-    return url;
-  } catch (e) {
-    print(e);
-    return null;
+  Future<String?> uploadProfile(File imageFile) async {
+    try {
+      // path to storage
+      final path = 'profile/${DateTime.now()}.png';
+      final file = File(imageFile.path);
+      final ref = firebase_storage.FirebaseStorage.instance.ref().child(path);
+      await ref.putFile(file);
+      final url = await ref.getDownloadURL();
+      return url;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
-}
 
-Future<void> updateUser(userId, Users user) async {
-  try {
-    await FirebaseFirestore.instance
-        .collection('products')
-        .doc(userId)
-        .update(user.toJson());
-  } catch (e) {
-    print(e);
+  Future<void> updateUser(userId, Users user) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(userId)
+          .update(user.toJson());
+    } catch (e) {
+      print(e);
+    }
   }
 }

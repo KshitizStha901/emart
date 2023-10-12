@@ -1,12 +1,11 @@
 import 'dart:io';
 
+import 'package:emart/Model/Users.dart';
+import 'package:emart/Services/Auth.dart';
 import 'package:emart/global_variables.dart';
 import 'package:emart/local_storage/SharedPref.dart';
-import 'package:emart/model/Users.dart';
-import 'package:emart/services/Auth.dart';
 import 'package:emart/widgets/Esnackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -49,7 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     String? uploadedImage;
 
     if (_image != null) {
-      uploadedImage = await Auth().uploadProfile(_image!);
+      // uploadedImage = await Auth().uploadImage(_image!);
     }
     String userID = FirebaseAuth.instance.currentUser!.uid;
     final updatedUserData = Users(

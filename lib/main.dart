@@ -39,10 +39,11 @@ Future<void> main() async {
       '/profile': (context) => ProfileScreen(),
       '/details': (context) => ProductDetails(),
       '/search': (context) => SearchScreen(),
-      '/myproduct': (context) => MyProductScreen(),
+      '/myproduct': (context) => MyProductsScreen(),
       '/favourite': (context) => FavouriteScreen(),
       '/editprofile': (context) => EditProfileScreen(),
-      '/changepass': (context) => ChangePasswordScreen()
+      '/changepass': (context) => ChangePasswordScreen(),
+      '/editproduct': (context) => EditProfileScreen()
     },
   ));
 }

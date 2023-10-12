@@ -21,7 +21,7 @@ class ProductServices {
     }
   }
 
-  Future<void> createProduct(Products product) async {
+  Future<void> createProduct( product) async {
     try {
       await FirebaseFirestore.instance
           .collection('products')
