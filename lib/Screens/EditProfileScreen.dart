@@ -181,7 +181,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             TextFormField(
               controller: _phoneNumberController,
               decoration: const InputDecoration(
-                hintText: "Enter your phone name",
+                hintText: "Enter your phone number",
               ),
             ),
             ElevatedButton(
